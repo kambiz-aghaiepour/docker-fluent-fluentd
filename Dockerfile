@@ -1,17 +1,12 @@
-FROM fluent/fluentd:v0.14.11
-MAINTAINER Kambiz Aghaiepour <kambiz@aghaiepour.com>
-WORKDIR /home/fluent
-ENV PATH /home/fluent/.gem/ruby/2.3.0/bin:$PATH
+FROM centos
 
-# cutomize following "gem install fluent-plugin-..." line as you wish
+COPY fluentd.repo /etc/yum.repos.d/fluentd.repo
+RUN yum install -y td-agent
 
-USER root
-RUN apk --no-cache add sudo build-base ruby-dev && \
-    sudo -u fluent gem install fluent-plugin-elasticsearch fluent-plugin-record-reformer fluent-plugin-secure-forward && \
-    rm -rf /home/fluent/.gem/ruby/2.3.0/cache/*.gem && sudo -u fluent gem sources -c && \
-    apk del sudo build-base ruby-dev
+ENV PATH=/opt/td-agent/embedded/bin:$PATH
+RUN gem install fluent-plugin-elasticsearch
+RUN gem install fluent-plugin-beats
+RUN systemctl start td-agent.service
 
-EXPOSE 24284
+CMD ["/bin/bash"]
 
-USER fluent
-CMD exec fluentd -c /fluentd/etc/$FLUENTD_CONF -p /fluentd/plugins $FLUENTD_OPT
