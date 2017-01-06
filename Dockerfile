@@ -20,5 +20,6 @@ ENV TD_AGENT_OPTIONS="--use-v1-config"
 ENV LD_PRELOAD=${TD_AGENT_HOME}/embedded/lib/libjemalloc.so
 ENV TD_AGENT_ARGS="${TD_AGENT_BIN_FILE} --log ${TD_AGENT_LOG_FILE} ${TD_AGENT_OPTIONS}"
 
-CMD [${TD_AGENT_RUBY}, ${TD_AGENT_BIN_FILE}, "--log", ${TD_AGENT_LOG_FILE}, ${TD_AGENT_OPTIONS}]
+CMD ["/opt/td-agent/embedded/bin/ruby", "/usr/sbin/td-agent", "--log", "/var/log/td-agent/td-agent.log", "--use-v1-config"]
+
 
